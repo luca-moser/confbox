@@ -34,6 +34,8 @@ github.com/h2non/gock v1.0.12/go.mod h1:CZMcB0Lg5IWnr9bF79pPMg9WeV6WumxQiUJ1UvdO
 github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpOxQnU=
 github.com/iotaledger/iota.go v1.0.0-beta.0.20190103113928-5bb48580ef97 h1:0xoTo/G7JbknoaFN98NkbusImguMpXhKB0bfcj0Hc4w=
 github.com/iotaledger/iota.go v1.0.0-beta.0.20190103113928-5bb48580ef97/go.mod h1:0LYUuoVfhD89qoFEzB5jrVs92OC0z85tDVY8QKx3l24=
+github.com/iotaledger/iota.go v1.0.0-beta.0.20190207133459-337e4b9be8f0 h1:xLzdA36FCoH6Ri6EhPMZNlLVkItQ6qc7U72D9Qzh0yo=
+github.com/iotaledger/iota.go v1.0.0-beta.0.20190207133459-337e4b9be8f0/go.mod h1:OFpaGRKHmFlQ8HsuaB4rYX8BOxW9Fm0pDEjrwwTxsX4=
 github.com/labstack/echo v3.3.5+incompatible h1:9PfxPUmasKzeJor9uQTaXLT6WUG/r+vSTmvXxvv3JO4=
 github.com/labstack/echo v3.3.5+incompatible/go.mod h1:0INS7j/VjnFxD4E2wkz67b8cVwCLbBmJyDaka6Cmk1s=
 github.com/labstack/gommon v0.2.8 h1:JvRqmeZcfrHC5u6uVleB4NxxNbzx6gpbJiQknDbKQu0=
