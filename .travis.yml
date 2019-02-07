@@ -3,12 +3,16 @@ go: "1.11.5"
 
 if: tag IS present
 
-stages:
-  - script
-  - after_script
+env:
+  - GO111MODULE=on
+
+install: true
+
+notifications:
+  email: false
 
 script:
-  - env GO111MODULE=on CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build --tags="pow_avx" -ldflags="-s -w" -v -o confbox
+  - GOOS=linux GOARCH=amd64 go build --tags="pow_avx" -ldflags="-s -w" -v -o confbox
   - md5sum confbox
 
 after_script:
