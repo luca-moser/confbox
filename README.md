@@ -28,7 +28,20 @@ The HTTP response looks like this:
 
 If ConfBox did not gather enough data yet, some `results` will show `-1`.
 
-A docker image is available under`lucamoser/confbox:x.x.x`.
+
+
+## Install using docker
+Assuming we are running on a linux box.
+
+1. install [docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/) and [docker-compose](https://docs.docker.com/compose/install/).
+2. create a new dir for confbox
+3. copy the `docker-compose.yml`, `config.json` and `confbox` from the repository to your folder.
+4. `chmod +x confbox`  
+5. replace the `REPLACE_ME` placeholders inside `config.json` with your own nodes.
+you can pick multiple nodes from [iota.dance](http://iota.dance) to put in the `nodes` array.
+6. start the confbox with `./confbox start`
+
+Your ConfBox is now up and running under `http://your-address:15265`.
 
 ## How it works
 - A buffer with space for 30 minutes worth of measurement data is allocated.

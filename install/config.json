@@ -1,0 +1,27 @@
+
+{
+  "listen": "0.0.0.0:15265",
+  "debug": false,
+  "local_pow": true,
+  "result_log_interval": 5,
+  "mwm": 14,
+  "gtta_depth": 3,
+  "transfer_polling": {
+    "interval": 10
+  },
+  "promote_reattach": {
+    "enabled": false,
+    "interval": 30
+  },
+  "quorum": {
+    "primary_node": "https://<REPLACE_ME>:14265",
+    "nodes": [
+      "https://<REPLACE_ME>:14265",
+      "https://<REPLACE_ME>:14268"
+    ],
+    "max_subtangle_milestone_delta": 1,
+    "timeout": 15,
+    "threshold": 0.66,
+    "no_response_tolerance": 0.2
+  }
+}

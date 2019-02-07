@@ -1,0 +1,16 @@
+ersion: '3.3'
+
+services:
+  app:
+    image: 'lucamoser/confbox.sh:0.1.0'
+    hostname: confbox.sh
+    container_name: confbox.sh
+    stdin_open: true
+    tty: true
+    restart: always
+    volumes:
+      - './config.json:/app/config.json'
+      - '/etc/ssl/certs:/etc/ssl/certs:ro'
+      - '/etc/localtime:/etc/localtime:ro'
+    command: start
+    network_mode: "host"
