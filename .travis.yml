@@ -12,10 +12,10 @@ notifications:
   email: false
 
 script:
-  - GOOS=linux GOARCH=amd64 go build --tags="pow_avx" -ldflags="-s -w" -v -o confbox.sh
+  - GOOS=linux GOARCH=amd64 go build --tags="pow_avx" -ldflags="-s -w" -v -o confbox
   - md5sum confbox.sh
 
 after_script:
   - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-  - docker build -t lucamoser/confbox.sh:$TRAVIS_TAG .
-  - docker push lucamoser/confbox.sh:$TRAVIS_TAG
+  - docker build -t lucamoser/confbox:$TRAVIS_TAG .
+  - docker push lucamoser/confbox:$TRAVIS_TAG
