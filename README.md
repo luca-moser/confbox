@@ -3,6 +3,8 @@
 ConfBox monitors the overall confirmation rate of the IOTA Tangle network.
 It provides a single HTTP endpoint from which the currently measured confirmation rate can be retrieved.
 
+You can access currently online ConfBoxes under: http://88.99.60.78:15265, http://159.69.9.6:15265.
+
 The HTTP response looks like this:
 ```json
 {
