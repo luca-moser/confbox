@@ -110,7 +110,10 @@ func main() {
 		for {
 			msg, _ := converter.ASCIIToTrytes(fmt.Sprintf("conf box tx: %d", counter))
 			for i := 0; i < txPerPoint; i++ {
-				acc.Send(account.Recipient{Address: addr, Tag: "CONFBOX", Message: msg})
+				_, err := acc.Send(account.Recipient{Address: addr, Tag: "CONFBOX", Message: msg})
+				if err != nil {
+					logger.Errorf("unable to send transaction: %s", err.Error())
+				}
 			}
 			logger.Debugf("sent off %d txs", txPerPoint)
 			<-ticker.C
