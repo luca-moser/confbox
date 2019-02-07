@@ -13,7 +13,7 @@ notifications:
 
 script:
   - GOOS=linux GOARCH=amd64 go build --tags="pow_avx" -ldflags="-s -w" -v -o confbox
-  - md5sum confbox.sh
+  - md5sum confbox
 
 after_script:
   - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
