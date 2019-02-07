@@ -1,0 +1,18 @@
+language: go
+go: "1.11.5"
+
+if: tag IS present
+
+stages:
+  - script
+  - after_script
+
+script:
+  - go get ./...
+  - CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build --tags="pow_avx" -ldflags="-s -w" -v -o confbox
+  - md5sum confbox
+
+after_script:
+  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+  - docker build -t lucamoser/confbox:$TRAVIS_TAG .
+  - docker push lucamoser/confbox:$TRAVIS_TAG

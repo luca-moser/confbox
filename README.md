@@ -1,4 +1,4 @@
-# ConfBox
+# ConfBox [![Build Status](https://travis-ci.org/luca-moser/confbox.svg?branch=master)](https://travis-ci.org/luca-moser/confbox)
 
 ConfBox monitors the overall confirmation rate of the IOTA Tangle network.
 It provides a single HTTP endpoint from which the currently measured confirmation rate can be retrieved.
@@ -27,6 +27,8 @@ The HTTP response looks like this:
 ```
 
 If ConfBox did not gather enough data yet, some `results` will show `-1`.
+
+A docker image is available under`lucamoser/confbox:x.x.x`.
 
 ## How it works
 - A buffer with space for 30 minutes worth of measurement data is allocated.
