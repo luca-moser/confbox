@@ -1,0 +1,26 @@
+{
+  "listen": "127.0.0.1:9090",
+  "debug": false,
+  "local_pow": true,
+  "result_log_interval": 5,
+  "mwm": 14,
+  "gtta_depth": 3,
+  "transfer_polling": {
+    "interval": 10
+  },
+  "promote_reattach": {
+    "enabled": false,
+    "interval": 30
+  },
+  "quorum": {
+    "primary_node": "https://node-x.iota-tangle.io:14268",
+    "nodes": [
+      "https://trinity.iota-tangle.io:14265",
+      "https://node-x.iota-tangle.io:14268"
+    ],
+    "max_subtangle_milestone_delta": 1,
+    "timeout": 15,
+    "threshold": 0.66,
+    "no_response_tolerance": 0.2
+  }
+}
