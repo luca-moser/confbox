@@ -3,7 +3,9 @@
 ConfBox monitors the overall confirmation rate of the IOTA Tangle network.
 It provides a single HTTP endpoint from which the currently measured confirmation rate can be retrieved.
 
-You can access currently online ConfBoxes under: http://88.99.60.78:15265, http://159.69.9.6:15265.
+You can access currently online ConfBoxes under: 
+* mainnet: http://88.99.60.78:15265, http://159.69.9.6:15265.
+* devnet: http://88.99.60.78:15266, http://159.69.9.6:15266.
 
 The HTTP response looks like this:
 ```json
@@ -30,9 +32,7 @@ The HTTP response looks like this:
 
 If ConfBox did not gather enough data yet, some `results` will show `-1`.
 
-
-
-## Install using docker
+## Install your own ConfBox using docker
 Assuming we are running on a linux box.
 
 1. install [docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/) and [docker-compose](https://docs.docker.com/compose/install/).
@@ -100,3 +100,19 @@ Sample config:
   }
 }
 ```
+
+## Usage with the account package
+
+Create a new `SendOracle` and use a `ConfBoxDecider` as an `OracleSource`:
+```go
+func main() {
+    ...
+    
+    timeDecider := oracle_time.NewTimeDecider(ntpClock, time.Duration(1)*time.Hour)
+    confRateDecider := oracle_confbox.NewConfBoxDecider("<confbox-url>", ntpClock, 0.70, oracle_confbox.AvgMode10Min)
+    sendOracle := oracle.New(timeDecider, confRateDecider)
+    ...
+}
+```
+
+You can instantiate multiple `ConfBoxDecider`s pointing to different ConfBoxes, to gain an even higher confidence.

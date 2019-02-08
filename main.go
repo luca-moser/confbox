@@ -21,6 +21,7 @@ import (
 	"github.com/iotaledger/iota.go/pow"
 	. "github.com/iotaledger/iota.go/trinary"
 	"github.com/labstack/echo"
+	"github.com/luca-moser/confbox/models"
 	"github.com/luca-moser/confbox/quorum"
 	"io/ioutil"
 	"math"
@@ -98,7 +99,7 @@ func main() {
 	defer acc.Shutdown()
 
 	getResult := make(chan struct{})
-	backResult := make(chan ConfRate)
+	backResult := make(chan models.ConfRate)
 	go measure(em, getResult, backResult)
 
 	// send off a bundle each minute
@@ -114,6 +115,7 @@ func main() {
 				if err != nil {
 					logger.Errorf("unable to send transaction: %s", err.Error())
 				}
+				counter++
 			}
 			logger.Debugf("sent off %d txs", txPerPoint)
 			<-ticker.C
@@ -135,7 +137,7 @@ func main() {
 	e.GET("/", func(c echo.Context) error {
 		getResult <- struct{}{}
 		result := <-backResult
-		res := Response{Config: conf.info, Results: result}
+		res := models.Response{Config: conf.ExposedConfig, Results: result}
 		return c.JSON(http.StatusOK, res)
 	})
 	must(e.Start(conf.Listen))
@@ -148,18 +150,6 @@ var sizes = [4]int{5, 5, 5, 15}
 
 var points = ring.New(retentionPolicy)
 var pointsFilled = 0
-
-type ConfRate struct {
-	Avg5  float64 `json:"avg_5"`
-	Avg10 float64 `json:"avg_10"`
-	Avg15 float64 `json:"avg_15"`
-	Avg30 float64 `json:"avg_30"`
-}
-
-type Response struct {
-	Results ConfRate `json:"results"`
-	Config  info     `json:"config"`
-}
 
 type bucket struct {
 	ok        bool
@@ -174,7 +164,7 @@ func (b *bucket) rate() float64 {
 	return math.Floor((b.confirmed/b.size)*100) / 100
 }
 
-func measure(em event.EventMachine, getResult chan struct{}, backResult chan ConfRate) {
+func measure(em event.EventMachine, getResult chan struct{}, backResult chan models.ConfRate) {
 	lis := listener.NewChannelEventListener(em).RegConfirmedTransfers().RegSentTransfers()
 
 	gathered := 0
@@ -249,12 +239,13 @@ func measure(em event.EventMachine, getResult chan struct{}, backResult chan Con
 					buckets[i+1] = cpy
 				}
 			}
-			cr := ConfRate{}
-			cr.Avg5 = buckets[0].rate()
-			cr.Avg10 = buckets[1].rate()
-			cr.Avg15 = buckets[2].rate()
-			cr.Avg30 = buckets[3].rate()
-			backResult <- cr
+
+			backResult <- models.ConfRate{
+				buckets[0].rate(),
+				buckets[1].rate(),
+				buckets[2].rate(),
+				buckets[3].rate(),
+			}
 		}
 	}
 }
@@ -277,20 +268,8 @@ func randAddr() Hash {
 	return hash
 }
 
-type info struct {
-	MWM             uint64 `json:"mwm"`
-	GTTADepth       uint64 `json:"gtta_depth"`
-	TransferPolling struct {
-		Interval uint64 `json:"interval"`
-	} `json:"transfer_polling"`
-	PromoteReattach struct {
-		Enabled  bool   `json:"enabled"`
-		Interval uint64 `json:"interval"`
-	} `json:"promote_reattach"`
-}
-
 type config struct {
-	info
+	models.ExposedConfig
 	Listen            string `json:"listen"`
 	LocalPow          bool   `json:"local_pow"`
 	Debug             bool   `json:"debug"`
