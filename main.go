@@ -119,6 +119,7 @@ func main() {
 						i--
 						retries++
 					} else {
+						logger.Errorf("couldn't send transaction at pos %d of batch after %d retries", i+1, maxRetries)
 						retries = 0
 					}
 					continue
