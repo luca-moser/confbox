@@ -110,11 +110,20 @@ func main() {
 		ticker := time.NewTicker(time.Duration(1) * time.Minute)
 		for {
 			msg, _ := converter.ASCIIToTrytes(fmt.Sprintf("conf box tx: %d", counter))
+			retries := 0
 			for i := 0; i < txPerPoint; i++ {
 				_, err := acc.Send(account.Recipient{Address: addr, Tag: "CONFBOX", Message: msg})
 				if err != nil {
 					logger.Errorf("unable to send transaction: %s", err.Error())
+					if retries != maxRetries {
+						i--
+						retries++
+					} else {
+						retries = 0
+					}
+					continue
 				}
+				retries = 0
 				counter++
 			}
 			logger.Debugf("sent off %d txs", txPerPoint)
@@ -145,6 +154,7 @@ func main() {
 
 const txPerPoint = 5
 const retentionPolicy = 31
+const maxRetries = 5
 
 var sizes = [4]int{5, 5, 5, 15}
 
