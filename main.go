@@ -13,7 +13,6 @@ import (
 	"github.com/iotaledger/iota.go/account/plugins/promoter"
 	"github.com/iotaledger/iota.go/account/plugins/transfer/poller"
 	"github.com/iotaledger/iota.go/account/store/inmemory"
-	"github.com/iotaledger/iota.go/account/timesrc"
 	"github.com/iotaledger/iota.go/api"
 	"github.com/iotaledger/iota.go/checksum"
 	"github.com/iotaledger/iota.go/consts"
@@ -27,7 +26,6 @@ import (
 	"math"
 	"net/http"
 	"os"
-	"strings"
 	"time"
 )
 
@@ -68,14 +66,8 @@ func main() {
 	// init account
 	em := event.NewEventMachine()
 
+	// use an in memory store for the account
 	dataStore := inmemory.NewInMemoryStore()
-
-	// create a poller which will check for incoming transfers
-	receiveEventFilter := poller.NewPerTailReceiveEventFilter(true)
-	transferPoller := poller.NewTransferPoller(
-		iotaAPI, dataStore, em, account.NewInMemorySeedProvider(strings.Repeat("9", 81)),
-		receiveEventFilter, time.Duration(conf.TransferPolling.Interval)*time.Second,
-	)
 
 	// build the account object
 	b := builder.NewBuilder().
@@ -83,18 +75,23 @@ func main() {
 		WithStore(dataStore).
 		WithMWM(conf.MWM).
 		WithDepth(conf.GTTADepth).
-		WithPlugins(transferPoller)
+		WithEvents(em)
+
+	// create a poller which will check for incoming transfers
+	receiveEventFilter := poller.NewPerTailReceiveEventFilter(true)
+	transferPoller := poller.NewTransferPoller(
+		b.Settings(), receiveEventFilter, time.Duration(conf.TransferPolling.Interval)*time.Second,
+	)
 
 	// create a promoter/reattacher which takes care of trying to get
 	// pending transfers to confirm.
 	if conf.PromoteReattach.Enabled {
-		b.WithPlugins(promoter.NewPromoter(
-			iotaAPI, dataStore, em, &timesrc.SystemClock{},
-			time.Duration(conf.PromoteReattach.Interval)*time.Second,
-			conf.GTTADepth, conf.MWM))
+		prom := promoter.NewPromoter(b.Settings(), time.Duration(conf.PromoteReattach.Interval)*time.Second)
+		acc, err = b.Build(transferPoller, prom)
+	} else {
+		acc, err = b.Build(transferPoller)
+		must(err)
 	}
-	acc, err = b.WithEvents(em).Build()
-	must(err)
 	must(acc.Start())
 	defer acc.Shutdown()
 
@@ -132,6 +129,7 @@ func main() {
 		}
 	}()
 
+	// print out the network confirmation rate ever N minutes
 	go func() {
 		ticker := time.NewTicker(time.Duration(conf.ResultLogInterval) * time.Minute)
 		for {
