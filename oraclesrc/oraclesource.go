@@ -63,7 +63,7 @@ var modeToMinMap = map[AvgMode]int{
 	AvgMode30Min: 30,
 }
 
-func (cbd *ConfBoxDecider) Ok(conds *deposit.Conditions) (bool, string, error) {
+func (cbd *ConfBoxDecider) Ok(conds *deposit.CDA) (bool, string, error) {
 	res, err := http.Get(cbd.url)
 	if err != nil {
 		return false, "", errors.Wrapf(err, "unable to query ConfBox at %s", cbd.url)
